@@ -5,16 +5,23 @@ import org.jsoup.select.NodeVisitor
 import scala.collection.JavaConverters._
 
 class SanFranciscoPoolScheduleFetcher extends PoolScheduleFetcher {
-  val urls = List("http://sfrecpark.org/destination/mission-playground/mission-community-pool/", "http://sfrecpark.org/destination/garfield-square/garfield-pool/")
 
   override def systemSchedule: SystemSchedule = {
     val schedules = new SystemSchedule
+      val urls = allPoolUrls("http://sfrecpark.org/recreation-community-services/aquatics-pools/")
     urls.foreach { url =>
-      val document = Jsoup.connect(url).userAgent("CityPool_Crawler-0.3").get()
+      val document = get(url)
       schedules(extractPool(document)) = extractSchedule(document)
 
     }
     schedules
+  }
+
+
+  def allPoolUrls(rootUrl:String): List[String] = {
+    val document = get(rootUrl)
+    val links = document.select(".sidebar-list h4 a[href]").asScala
+    links.map { case e: Element => e.attr("href")}.toList
   }
 
   def extractPool(document: Document): Pool = {
