@@ -28,24 +28,26 @@ object Weekday extends Enumeration {
   }
 }
 
-object EventType extends Enumeration {
-  type EventType = EventType.Value
-  val LapSwim = Value
-  val RecreationSwim = Value
-  val SeniorSwim = Value
-  val Unknown = Value
+
+sealed class EventType
+object EventType  {
+  case object LapSwim extends EventType
+  case object RecreationSwim extends EventType
+  case object SeniorSwim extends EventType
+  case class Unknown(text: String) extends EventType
 
   val rLapSwim = "(?i)\\s*lap.*".r
   val rOpenSwim = "(?i)\\s*recreation.*".r
   val rSeniorSwim = "(?i)\\s*senior.*".r
 
-  def parse(s: String): EventType.EventType = s match {
+  def parse(s: String): EventType = s match {
     case rLapSwim() => LapSwim
     case rOpenSwim() => RecreationSwim
     case rSeniorSwim() => SeniorSwim
-    case _ => Unknown
+    case _ => Unknown(s)
   }
 }
+
 
 
 object TimeParser {
@@ -73,7 +75,7 @@ object DateParser {
   }
 }
 
-class ScheduleEntry(eventType: EventType.EventType,
+class ScheduleEntry(eventType: EventType,
                     day: Weekday.Weekday,
                     start: Option[LocalTime], end: Option[LocalTime],
                     validFrom: Option[LocalDate], validTo: Option[LocalDate]) {
