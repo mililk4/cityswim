@@ -31,14 +31,14 @@ class SanFranciscoPoolScheduleFetcher extends PoolScheduleFetcher {
 
   def extractSchedule(document: Document): Seq[ScheduleEntry] = {
     val entries = collection.mutable.LinkedList.newBuilder[ScheduleEntry]
-    var day: Option[Weekday.Weekday] = None
+    var day: Option[Weekdays.Weekday] = None
 
     document.traverse(new NodeVisitor {
       override def tail(node: Node, depth: Int): Unit = {
         node match {
           case e: Element =>
             if (e.nodeName == "h3") {
-              day = Weekday.parse(e.text)
+              day = Weekdays.parse(e.text)
             }
             if (day.isDefined && e.nodeName == "tbody") {
               entries += ScheduleEntry.make(day.get, e.select("td").asScala.map(cell => cell.text))
