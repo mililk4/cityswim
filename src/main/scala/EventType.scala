@@ -1,4 +1,4 @@
-sealed class EventType
+sealed abstract class EventType
 
 object EventType {
 

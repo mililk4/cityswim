@@ -1,13 +1,14 @@
 
-import Weekdays.Weekday
 import org.joda.time._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 import scala.collection.mutable
 
-
+/* The beginnings of the view model. */
 case class SwimTime(day: Weekday, start: LocalTime, end: LocalTime, pool: Pool) extends Ordered[SwimTime] {
+  /* This calculation of times is a little hinky. It depends on sessions never crossing midnight boundaries.
+    * But I guess the data model does as well, so it's fine? Hm. */
   def actualEnd: DateTime = {
     val now = new DateTime()
     var actualEnd = end.toDateTime(now).withDayOfWeek(day.asInt)
@@ -17,15 +18,19 @@ case class SwimTime(day: Weekday, start: LocalTime, end: LocalTime, pool: Pool) 
     actualEnd.toDateTime
   }
 
-  def actualStart: DateTime = {start.toDateTime(actualEnd)}
+  def actualStart: DateTime = {
+    start.toDateTime(actualEnd)
+  }
 
-  override def compare(that: SwimTime): Int = this.actualEnd.compareTo(that.actualEnd)
+  val ORDERING = Ordering.Tuple3(Ordering.Long, Ordering.Long, Ordering.String)
+
+  private def sortTuple = (actualStart.getMillis, actualStart.getMillis, pool.name)
+
+  override def compare(that: SwimTime): Int = ORDERING.compare(this.sortTuple, that.sortTuple)
 }
 
 object Scratch extends App {
-
-  val sf = new SanFranciscoPoolScheduleFetcher
-  val schedules = sf.systemSchedule
+  val schedules = (new SanFranciscoPoolScheduleFetcher).systemSchedule
   println("Upcoming lap swims:")
   printUpcomingLapSwims(schedules)
   println("-" * 50)
@@ -45,7 +50,7 @@ object Scratch extends App {
       val now = new DateTime
       print(swim)
       if (swim.actualStart.isBefore(now)) {
-        print(" runs for " + minutesFromNow(swim.actualEnd) + " minutes")
+        print(" runs for " + minutesFromNow(swim.actualEnd) + " more minutes")
       } else {
         print(" starts in " + minutesFromNow(swim.actualStart) + " minutes")
       }
@@ -53,9 +58,8 @@ object Scratch extends App {
       println()
     }
 
-    def minutesFromNow(dt: DateTime)  = new Duration(new DateTime(), dt).getStandardMinutes
+    def minutesFromNow(dt: DateTime) = new Duration(new DateTime(), dt).getStandardMinutes
   }
-
 
 
   def dump(schedules: SystemSchedule) {

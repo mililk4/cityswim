@@ -31,7 +31,7 @@ class SanFranciscoPoolScheduleFetcher extends PoolScheduleFetcher {
 
   def extractSchedule(document: Document): Seq[ScheduleEntry] = {
     val entries = collection.mutable.LinkedList.newBuilder[ScheduleEntry]
-    var day: Option[Weekdays.Weekday] = None
+    var day: Option[Weekday] = None
 
     document.traverse(new NodeVisitor {
       override def tail(node: Node, depth: Int): Unit = {

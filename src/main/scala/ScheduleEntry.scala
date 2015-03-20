@@ -1,7 +1,7 @@
 import org.joda.time.{LocalDate, LocalTime}
 
 object ScheduleEntry {
-  def make(day: Weekdays.Weekday, text: Seq[String]): ScheduleEntry = {
+  def make(day: Weekday, text: Seq[String]): ScheduleEntry = {
     new ScheduleEntry(EventType.parse(text(0)),
       day,
       TimeParser.parse(text(2)),
@@ -12,7 +12,7 @@ object ScheduleEntry {
 }
 
 class ScheduleEntry(val eventType: EventType,
-                    val day: Weekdays.Weekday,
+                    val day: Weekday,
                     val start: Option[LocalTime], val end: Option[LocalTime],
                     val validFrom: Option[LocalDate], val validTo: Option[LocalDate]) {
   override def toString: String = s"ScheduleEntry($eventType, $day, $start, $end, $validFrom, $validTo)"
