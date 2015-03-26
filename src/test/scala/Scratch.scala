@@ -24,11 +24,23 @@ case class SwimTime(day: Weekday, start: LocalTime, end: LocalTime, pool: Pool) 
   }
 
   def poolName = {
-    pool.name.replaceAll("\\s*Pool$", "")
+    pool.name.replaceAll("\\s*Pool$", "").replaceAll("Mission Community","Mission").replaceAll("Martin Luther King Jr", "MLK")
   }
 
   def timeLabel = {
-    day.shortName + " " + shortTime(start) + "-" + shortTime(end)
+    dayLabel + " " + startLabel + "-" + endLabel
+  }
+
+  def endLabel: String = {
+    shortTime(end)
+  }
+
+  def startLabel: String = {
+    shortTime(start)
+  }
+
+  def dayLabel: String = {
+    day.shortName
   }
 
   private def shortTime(time: LocalTime): String = {
@@ -68,6 +80,9 @@ object Scratch extends App {
     val swims = upcomingSwims(schedule)
     val json = "swims" -> swims.map { s =>
       ("pool_name" -> s.poolName) ~
+        ("day_label" -> s.dayLabel) ~
+        ("start_label" -> s.startLabel) ~
+        ("end_label" -> s.endLabel) ~
         ("time_label" -> s.timeLabel) ~
         ("start" -> s.actualStart.getMillis) ~
         ("end" -> s.actualEnd.getMillis)
