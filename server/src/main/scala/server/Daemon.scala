@@ -25,6 +25,7 @@ class Daemon extends MyActor {
     case Start =>
       log.info("starting daemon")
       context.system.scheduler.schedule(1.second, Settings.reloadFrequency, crawler, Reload)
+      log.info("reload scheduled for every " + Settings.reloadFrequency)
       log.info("daemon started")
   }
 

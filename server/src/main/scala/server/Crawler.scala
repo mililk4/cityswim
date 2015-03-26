@@ -25,7 +25,7 @@ class Crawler extends MyActor {
       val swims = upcomingSwims(schedule)
       log.info("converted to swims")
       val json = jsonForSwims(swims)
-      log.info("rendered to JSON")
+      log.info("rendered to JSON; saving to " + Settings.targetFile)
       atomicWrite(json, Settings.targetFile)
       log.info("json saved")
 
