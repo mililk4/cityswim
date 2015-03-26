@@ -27,7 +27,7 @@ class Crawler extends MyActor {
       val json = jsonForSwims(swims)
       log.info("rendered to JSON; saving to " + Settings.targetFile)
       atomicWrite(json, Settings.targetFile)
-      log.info("json saved")
+      log.info("JSON saved")
 
       log.info("reload finished")
   }
