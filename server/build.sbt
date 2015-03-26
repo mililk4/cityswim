@@ -11,3 +11,4 @@ libraryDependencies += "com.github.nscala-time" %% "nscala-time" % "1.4.0"
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.2.11"
 
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.6"
