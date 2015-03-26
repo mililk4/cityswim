@@ -53,7 +53,7 @@ case class SwimTime(day: Weekday, start: LocalTime, end: LocalTime, pool: Pool) 
 
   val ORDERING = Ordering.Tuple3(Ordering.Long, Ordering.Long, Ordering.String)
 
-  private def sortTuple = (actualStart.getMillis, actualStart.getMillis, pool.name)
+  private def sortTuple = (actualStart.getMillis, actualEnd.getMillis, pool.name)
 
   override def compare(that: SwimTime): Int = ORDERING.compare(this.sortTuple, that.sortTuple)
 }
