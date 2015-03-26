@@ -7,8 +7,7 @@ RUN apt-get install -y openjdk-7-jre-headless
 
 ADD target/scala-2.10/cityswim.jar /usr/local/bin/cityswim.jar
 
-run mkdir /var/www/cityswim
-run mkdir /var/www/cityswim/v1
+run mkdir -p /var/www/cityswim/v1
 
 VOLUME /var/www/cityswim
 
