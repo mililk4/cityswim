@@ -3,6 +3,7 @@ import java.util.NoSuchElementException
 import org.joda.time.DateTimeConstants
 sealed abstract class Weekday(val name:String, val asInt: Int) extends Ordered[Weekday]{
   def compare(that: Weekday)  = this.asInt - that.asInt
+  def shortName = name.substring(0,3)
 }
 
 object Weekdays  {
