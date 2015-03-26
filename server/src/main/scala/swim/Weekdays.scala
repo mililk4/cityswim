@@ -1,4 +1,4 @@
-import java.util.NoSuchElementException
+package swim
 
 import org.joda.time.DateTimeConstants
 sealed abstract class Weekday(val name:String, val asInt: Int) extends Ordered[Weekday]{

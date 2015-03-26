@@ -1,7 +1,9 @@
 
+import fetcher.SanFranciscoPoolScheduleFetcher
 import org.joda.time._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import swim._
 
 import scala.collection.mutable.ListBuffer
 

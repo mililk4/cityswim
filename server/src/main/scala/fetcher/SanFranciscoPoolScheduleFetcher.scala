@@ -1,6 +1,8 @@
-import org.jsoup.Jsoup
+package fetcher
+
 import org.jsoup.nodes.{Document, Element, Node}
 import org.jsoup.select.NodeVisitor
+import swim._
 
 import scala.collection.JavaConverters._
 

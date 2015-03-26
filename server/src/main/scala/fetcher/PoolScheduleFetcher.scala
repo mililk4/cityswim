@@ -1,5 +1,8 @@
+package fetcher
+
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import swim.SystemSchedule
 
 abstract class PoolScheduleFetcher {
   def systemSchedule: SystemSchedule

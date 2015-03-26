@@ -1,3 +1,5 @@
+package swim
+
 sealed abstract class EventType
 
 object EventType {

@@ -1,3 +1,6 @@
+package swim
+
+import fetcher.{DateParser, TimeParser}
 import org.joda.time.{LocalDate, LocalTime}
 
 object ScheduleEntry {
