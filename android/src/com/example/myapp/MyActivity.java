@@ -19,6 +19,7 @@ import java.net.URL;
 public class MyActivity extends Activity {
 
     private static final String TAG = "CitySwim";
+    public static final String SWIM_DATA = "http://williampietri.com/cityswim/v1/swims.json";
 
     /**
      * Called when the activity is first created.
@@ -35,24 +36,6 @@ public class MyActivity extends Activity {
 
 
 
-    public void fillData() {
-        Log.e("Main", "fillData");
-        TableLayout tableLayout = (TableLayout) findViewById(R.id.table);
-        tableLayout.removeAllViews();
-
-
-        for (int i = 0; i < 10; i++) {
-            TableRow tableRow = new TableRow(getApplicationContext());
-
-            for (int j = 0; j < 4; j++) {
-                final TextView column = new TextView(getApplicationContext());
-                column.setText(i + "/" + j);
-                column.setPadding(5, 5, 5, 5);
-                tableRow.addView(column);
-            }
-            tableLayout.addView(tableRow);
-        }
-    }
 
     private class LoadSwimsTask extends AsyncTask<String,Integer,Swim[]> {
 
@@ -63,7 +46,6 @@ public class MyActivity extends Activity {
             try {
                 final Swim[] swims = loadSwims();
                 Log.i(TAG, "loaded swims: " + swims.length );
-
                 return swims;
             } catch (IOException e) {
                 Log.e(TAG, "IO issues", e);
@@ -92,7 +74,6 @@ public class MyActivity extends Activity {
                     table.addView(row);
                 }
             }
-
         }
 
         private TextView newColumn(String poolName, boolean bold) {
@@ -102,47 +83,53 @@ public class MyActivity extends Activity {
             column.setPadding(5, 5, 5, 5);
             if (bold) {
                 column.setTypeface(null, Typeface.BOLD);
-
             }
             return column;
         }
 
         public Swim[] loadSwims() throws IOException {
-            URL url = new URL("http://williampietri.com/transient/swims.json");
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection urlConnection = (HttpURLConnection) new URL(SWIM_DATA).openConnection();
             try {
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                BufferedReader bReader = new BufferedReader(new InputStreamReader(in, "utf-8"), 8);
-                StringBuilder sBuilder = new StringBuilder();
-
-                String line = null;
-                while ((line = bReader.readLine()) != null) {
-                    sBuilder.append(line);
-                    sBuilder.append("\n");
-                }
-
-                in.close();
-                String pageContents = sBuilder.toString();
-                JSONObject json = new JSONObject(pageContents);
-                JSONArray swimsJson = (JSONArray) json.get("swims");
-                Swim[] swims = new Swim[swimsJson.length()];
-                for (int i = 0; i < swimsJson.length(); i++) {
-                    JSONObject swimJson = (JSONObject) swimsJson.get(i);
-                    swims[i] = new Swim(swimJson.getString("pool_name"),
-                            swimJson.getString("day_label"),
-                            swimJson.getString("start_label"),
-                            swimJson.getString("end_label"),
-                            swimJson.getLong("start"),
-                            swimJson.getLong("end")
-                            );
-                }
-                return swims;
+                String pageContents = inhaleData(in);
+                return jsonToSwims(pageContents);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG,"parse failure", e);
                 return new Swim[0];
             } finally {
                 urlConnection.disconnect();
             }
+        }
+
+        private Swim[] jsonToSwims(String pageContents) throws JSONException {
+            JSONObject json = new JSONObject(pageContents);
+            JSONArray swimsJson = (JSONArray) json.get("swims");
+            Swim[] swims = new Swim[swimsJson.length()];
+            for (int i = 0; i < swimsJson.length(); i++) {
+                JSONObject swimJson = (JSONObject) swimsJson.get(i);
+                swims[i] = new Swim(swimJson.getString("pool_name"),
+                        swimJson.getString("day_label"),
+                        swimJson.getString("start_label"),
+                        swimJson.getString("end_label"),
+                        swimJson.getLong("start"),
+                        swimJson.getLong("end")
+                        );
+            }
+            return swims;
+        }
+
+        private String inhaleData(InputStream in) throws IOException {
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(in, "utf-8"), 8);
+            StringBuilder sBuilder = new StringBuilder();
+
+            String line;
+            while ((line = bReader.readLine()) != null) {
+                sBuilder.append(line);
+                sBuilder.append("\n");
+            }
+
+            in.close();
+            return sBuilder.toString();
         }
 
     }

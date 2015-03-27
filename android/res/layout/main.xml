@@ -9,7 +9,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Upcoming SF Lap Swims:"
+            android:text="SF Lap Swims"
             android:id="@+id/textView"/>
     <View
             android:layout_width="fill_parent"
