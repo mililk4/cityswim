@@ -10,7 +10,7 @@ class SanFranciscoPoolScheduleFetcher extends PoolScheduleFetcher {
 
   override def systemSchedule: SystemSchedule = {
     val schedules = new SystemSchedule
-      val urls = allPoolUrls("http://sfrecpark.org/recreation-community-services/aquatics-pools/")
+    val urls = allPoolUrls("http://sfrecpark.org/recreation-community-services/aquatics-pools/")
     urls.foreach { url =>
       val document = get(url)
       schedules(extractPool(document)) = extractSchedule(document)
@@ -20,14 +20,19 @@ class SanFranciscoPoolScheduleFetcher extends PoolScheduleFetcher {
   }
 
 
-  def allPoolUrls(rootUrl:String): List[String] = {
+  def allPoolUrls(rootUrl: String): List[String] = {
     val document = get(rootUrl)
     val links = document.select(".sidebar-list h4 a[href]").asScala
-    links.map { case e: Element => e.attr("href")}.toList
+    links.map { case e: Element => e.attr("href") }.toList
   }
 
   def extractPool(document: Document): Pool = {
-    new Pool(document.select("title").text.replaceFirst("\\s*\\|.*", ""))
+    val poolName = document.select("title").text.replaceFirst("\\s*\\|.*", "")
+    val infoPattern = "(.*?):\\s+(.*)".r
+    val destinationInfoUl = document.select(".sidebar-list ul").first()
+    val text = destinationInfoUl.select("li").asScala.map { case e: Element => e.text }
+    val info = text.filter(infoPattern.pattern.matcher(_).matches).map { case infoPattern(k, v) => (k, v) }.toMap
+    new Pool(poolName, info.get("Latitude").get.toDouble, info.get("Longitude").get.toDouble, info)
   }
 
 

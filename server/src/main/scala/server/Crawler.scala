@@ -6,7 +6,7 @@ import akka.actor._
 import fetcher.SanFranciscoPoolScheduleFetcher
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
-import swim.{EventType, SystemSchedule}
+import swim.{EventType, Pool, SystemSchedule}
 
 import scala.collection.mutable.ListBuffer
 
@@ -22,9 +22,10 @@ class Crawler extends MyActor {
       log.info("starting reload")
       val schedule = fetcher.systemSchedule
       log.info("schedules fetched")
+      val pools = schedule.keys
       val swims = upcomingSwims(schedule)
       log.info("converted to swims")
-      val json = jsonForSwims(swims)
+      val json = clientJson(pools, swims)
       log.info("rendered to JSON; saving to " + Settings.targetFile)
       atomicWrite(json, Settings.targetFile)
       log.info("JSON saved")
@@ -32,16 +33,23 @@ class Crawler extends MyActor {
       log.info("reload finished")
   }
 
-  def jsonForSwims(swims: ListBuffer[SwimTime]): String = {
-    val json = "swims" -> swims.map { s =>
-      ("pool_name" -> s.poolName) ~
-        ("day_label" -> s.dayLabel) ~
-        ("start_label" -> s.startLabel) ~
-        ("end_label" -> s.endLabel) ~
-        ("time_label" -> s.timeLabel) ~
-        ("start" -> s.actualStart.getMillis) ~
-        ("end" -> s.actualEnd.getMillis)
-    }
+  def clientJson(pools: Iterable[Pool], swims: ListBuffer[SwimTime]): String = {
+    val json =
+      ("pools" -> pools.map { p =>
+        ("pool_name" -> p.name) ~
+          ( "latitude" -> p.latitude) ~
+          ( "longitude" -> p.longitude)
+      }) ~
+        ("swims" -> swims.map { s =>
+          ("pool_name" -> s.poolName) ~
+            ("day_label" -> s.dayLabel) ~
+            ("start_label" -> s.startLabel) ~
+            ("end_label" -> s.endLabel) ~
+            ("time_label" -> s.timeLabel) ~
+            ("start" -> s.actualStart.getMillis) ~
+            ("end" -> s.actualEnd.getMillis)
+        }
+          )
 
     pretty(render(json))
   }
