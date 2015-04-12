@@ -17,6 +17,7 @@ public class SwimListActivity extends ActionBarActivity {
     public static final String TAG = "CitySwim";
     private SwimTableController tableController;
     private SwimDataFragment dataFragment;
+    private LocationCrazinessIsolator location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,11 @@ public class SwimListActivity extends ActionBarActivity {
         setContentView(R.layout.activity_swim_list);
         Log.i(TAG, "contentView set");
         dataFragment = loadOrCreateSwimData();
-        tableController = new SwimTableController(getApplicationContext(), (TableLayout) findViewById(R.id.table), dataFragment);
+        location = new LocationCrazinessIsolator(getApplicationContext());
+        tableController = new SwimTableController(getApplicationContext(),
+                (TableLayout) findViewById(R.id.table),
+                dataFragment,
+                location);
         Log.i(TAG, "tableContoller created");
         tableController.updateContents();
     }
