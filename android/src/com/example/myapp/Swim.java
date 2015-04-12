@@ -1,27 +1,37 @@
 package com.example.myapp;
 
+import android.location.Location;
+
 import java.util.Date;
 
 public class Swim {
-    private final String poolName;
+    private final Pool pool;
     private final String dayLabel;
     private final String startLabel;
     private final String endLabel;
     private final Date start;
     private final Date end;
 
-    public Swim(String pool_name, String day_label, String start_label, String end_label, long start, long end) {
-        poolName = pool_name;
-        dayLabel = day_label;
-        startLabel = start_label;
-        endLabel = end_label;
+    public Swim(Pool pool, String dayLabel, String startLabel, String endLabel, long start, long end) {
+        this.pool = pool;
+        this.dayLabel = dayLabel;
+        this.startLabel = startLabel;
+        this.endLabel = endLabel;
         this.start = new Date(start);
         this.end = new Date(end);
     }
 
+    public Pool getPool() {
+        return pool;
+    }
 
     public String getPoolName() {
-        return poolName;
+        return pool.getName();
+    }
+//    pool.name.replaceAll("\\s*Pool$", "").replaceAll("Mission Community","Mission").replaceAll("Martin Luther King Jr", "MLK")
+
+    public String getPoolShortName() {
+        return pool.getName().replaceAll("\\s*Pool$", "").replaceAll("\\s*Community","").replaceAll("Martin Luther King Jr", "MLK");
     }
 
     public String getDayLabel() {
@@ -56,5 +66,8 @@ public class Swim {
         return new Date();
     }
 
+    public Location getLocation() {
+        return pool.getLocation();
+    }
 
 }
