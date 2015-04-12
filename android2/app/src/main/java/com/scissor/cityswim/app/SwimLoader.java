@@ -55,7 +55,7 @@ public class SwimLoader {
         for (int i = 0; i < swimsJson.length(); i++) {
             JSONObject swimJson = (JSONObject) swimsJson.get(i);
             swims[i] = new Swim(poolsByName.get(swimJson.getString("pool_name")),
-                    swimJson.getString("day_label"),
+                    swimJson.getString("day_label").substring(0,2),
                     swimJson.getString("start_label"),
                     swimJson.getString("end_label"),
                     swimJson.getLong("start"),

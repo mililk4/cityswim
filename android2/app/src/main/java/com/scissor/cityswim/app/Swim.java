@@ -28,10 +28,13 @@ public class Swim {
     public String getPoolName() {
         return pool.getName();
     }
-//    pool.name.replaceAll("\\s*Pool$", "").replaceAll("Mission Community","Mission").replaceAll("Martin Luther King Jr", "MLK")
 
     public String getPoolShortName() {
-        return pool.getName().replaceAll("\\s*Pool$", "").replaceAll("\\s*Community","").replaceAll("Martin Luther King Jr", "MLK");
+        return shorten(pool.getName());
+    }
+
+    private String shorten(String longName) {
+        return longName.replaceAll("\\s*Pool$", "").replaceAll("\\s*Community","").replaceAll("Martin Luther King Jr", "MLK").replaceAll("North", "N");
     }
 
     public String getDayLabel() {
