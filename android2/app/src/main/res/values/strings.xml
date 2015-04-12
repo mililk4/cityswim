@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CitySwim</string>
+
+    <string name="loading">Loading…</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
