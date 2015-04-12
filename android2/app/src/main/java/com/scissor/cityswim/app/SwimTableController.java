@@ -1,6 +1,7 @@
 package com.scissor.cityswim.app;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -10,15 +11,18 @@ class SwimTableController {
 
     private final TableLayout layout;
     private final Context context;
+    private final SwimDataFragment data;
 
-    public SwimTableController(Context context, TableLayout layout) {
+    public SwimTableController(Context context, TableLayout layout, SwimDataFragment data) {
         this.context = context;
         this.layout = layout;
+        this.data = data;
     }
 
-    public void updateContents(Swim[] swims) {
+    public void updateContents() {
+        if (!data.hasSwims()) return;
         layout.removeAllViews();
-        for (Swim swim : swims) {
+        for (Swim swim : data.getSwims()) {
             if (!swim.isOver()) {
                 TableRow row = new TableRow(context);
                 row.addView(newColumn(swim.getPoolShortName(), swim.isRunning()));
@@ -34,6 +38,7 @@ class SwimTableController {
     private TextView newColumn(String poolName, boolean bold) {
         final TextView column = new TextView(context);
         column.setText(poolName);
+        column.setTextColor(Color.BLACK);
         column.setTextSize(18);
         column.setPadding(5, 5, 5, 5);
         if (bold) {

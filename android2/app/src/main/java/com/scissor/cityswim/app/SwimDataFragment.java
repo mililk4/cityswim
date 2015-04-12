@@ -3,6 +3,8 @@ package com.scissor.cityswim.app;
 import android.app.Fragment;
 import android.os.Bundle;
 
+import java.io.IOException;
+
 public class SwimDataFragment extends Fragment {
 
     @Override
@@ -13,11 +15,15 @@ public class SwimDataFragment extends Fragment {
 
     private Swim[] swims;
 
-    public void setSwims(Swim[] swims) {
-        this.swims = swims;
+    public void loadData() throws IOException {
+        swims = new SwimLoader().loadSwims();
     }
 
     public Swim[] getSwims() {
         return swims;
+    }
+
+    public boolean hasSwims() {
+        return swims != null && swims.length>0;
     }
 }

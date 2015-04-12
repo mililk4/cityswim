@@ -2,8 +2,8 @@ package com.scissor.cityswim.app;
 
 import android.app.FragmentManager;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,20 +24,23 @@ public class SwimListActivity extends ActionBarActivity {
         Log.i(TAG, "Starting onCreate");
         setContentView(R.layout.activity_swim_list);
         Log.i(TAG, "contentView set");
-        tableController = new SwimTableController(getApplicationContext(), (TableLayout) findViewById(R.id.table));
+        dataFragment = loadOrCreateSwimData();
+        tableController = new SwimTableController(getApplicationContext(), (TableLayout) findViewById(R.id.table), dataFragment);
         Log.i(TAG, "tableContoller created");
+        tableController.updateContents();
+    }
+
+    private SwimDataFragment loadOrCreateSwimData() {
+        SwimDataFragment dataFragment;
         FragmentManager fm = getFragmentManager();
         dataFragment = (SwimDataFragment) fm.findFragmentByTag("swimdata");
         if (dataFragment == null) {
-            // add the fragment
             dataFragment = new SwimDataFragment();
             fm.beginTransaction().add(dataFragment, "swimdata").commit();
             new LoadSwimsTask(dataFragment).execute();
-        } else {
-            tableController.updateContents(dataFragment.getSwims());
+            Log.i(TAG, "task called");
         }
-        Log.i(TAG, "task called");
-
+        return dataFragment;
     }
 
 
@@ -64,38 +67,35 @@ public class SwimListActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class LoadSwimsTask extends AsyncTask<String, Integer, Swim[]> {
+    private class LoadSwimsTask extends AsyncTask<Void, Void, Void> {
 
-        private final SwimDataFragment saveTo;
+        private final SwimDataFragment swimData;
 
         public LoadSwimsTask(SwimDataFragment saveTo) {
 
-            this.saveTo = saveTo;
+            this.swimData = saveTo;
         }
 
         @Override
-        protected Swim[] doInBackground(String... params) {
+        protected Void doInBackground(Void... voids) {
             Log.i(TAG, "doInBackground");
 
             try {
-                final Swim[] swims = new SwimLoader().loadSwims();
-                Log.i(TAG, "loaded swims: " + swims.length);
-                saveTo.setSwims(swims);
-                return swims;
+                swimData.loadData();
+                Log.i(TAG, "loaded swims: " + swimData.getSwims().length);
             } catch (IOException e) {
                 Log.e(TAG, "IO issues", e);
-                return new Swim[0];
             }
+            return null;
         }
+
 
         @Override
-        protected void onPostExecute(Swim[] swims) {
+        protected void onPostExecute(Void ignored) {
             Log.i(TAG, "starting OnPostExecute");
-            tableController.updateContents(dataFragment.getSwims());
+            tableController.updateContents();
             Log.i(TAG, "finished OnPostExecute");
         }
-
-
 
     }
 }
