@@ -1,7 +1,8 @@
 package com.example.myapp;
 
 import android.app.Activity;
-import android.location.Location;
+import android.content.Context;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +10,7 @@ import android.widget.TableLayout;
 
 import java.io.*;
 
-public class MyActivity extends Activity {
+public class MyActivity extends Activity  {
 
     public static final String TAG = "CitySwim";
     private SwimTableController tableController;
@@ -24,6 +25,7 @@ public class MyActivity extends Activity {
         setContentView(R.layout.main);
         Log.i(TAG, "contentView set");
         tableController = new SwimTableController(getApplicationContext(), (TableLayout) findViewById(R.id.table));
+        Log.i(TAG, "tableContoller allocated");
         new LoadSwimsTask().execute();
         Log.i(TAG, "task called");
     }
