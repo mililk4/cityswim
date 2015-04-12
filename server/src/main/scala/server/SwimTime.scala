@@ -22,7 +22,7 @@ case class SwimTime(day: Weekday, start: LocalTime, end: LocalTime, pool: Pool) 
   }
 
   def poolName = {
-    pool.name.replaceAll("\\s*Pool$", "").replaceAll("Mission Community","Mission").replaceAll("Martin Luther King Jr", "MLK")
+    pool.name
   }
 
   def timeLabel = {
