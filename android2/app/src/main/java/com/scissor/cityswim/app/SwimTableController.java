@@ -25,7 +25,7 @@ class SwimTableController {
 
     public void updateContents() {
         if (!data.hasSwims()) return;
-        Location location = locationProvider.bestRecentLocation();
+        Location location = locationProvider.usefulRecentLocation();
         layout.removeAllViews();
         for (Swim swim : data.getSwims()) {
             if (!swim.isOver()) {

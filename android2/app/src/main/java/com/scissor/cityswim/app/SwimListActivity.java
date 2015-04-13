@@ -10,6 +10,9 @@ import android.view.MenuItem;
 import android.widget.TableLayout;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 public class SwimListActivity extends ActionBarActivity {
@@ -33,6 +36,15 @@ public class SwimListActivity extends ActionBarActivity {
                 location);
         Log.i(TAG, "tableContoller created");
         tableController.updateContents();
+        startRepeatingTasks();
+    }
+
+    private void startRepeatingTasks() {
+        ScheduledThreadPoolExecutor pool = (ScheduledThreadPoolExecutor)
+                Executors.newScheduledThreadPool(2);
+        pool.scheduleAtFixedRate(new UpdateUiTask(),10,10, TimeUnit.SECONDS );
+        pool.scheduleAtFixedRate(new RefreshSwimsTask(),30,30, TimeUnit.MINUTES );
+
     }
 
     private SwimDataFragment loadOrCreateSwimData() {
@@ -42,10 +54,14 @@ public class SwimListActivity extends ActionBarActivity {
         if (dataFragment == null) {
             dataFragment = new SwimDataFragment();
             fm.beginTransaction().add(dataFragment, "swimdata").commit();
-            new LoadSwimsTask(dataFragment).execute();
-            Log.i(TAG, "task called");
+            loadFreshSwimData(dataFragment);
         }
         return dataFragment;
+    }
+
+    private void loadFreshSwimData(SwimDataFragment dataFragment) {
+        new LoadSwimsTask(dataFragment).execute();
+        Log.i(TAG, "task called");
     }
 
 
@@ -102,5 +118,30 @@ public class SwimListActivity extends ActionBarActivity {
             Log.i(TAG, "finished OnPostExecute");
         }
 
+    }
+
+    private class UpdateUiTask implements Runnable {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tableController.updateContents();
+                }
+            });
+
+        }
+    }
+    private class RefreshSwimsTask implements Runnable {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadFreshSwimData(dataFragment);
+                }
+            });
+
+        }
     }
 }
