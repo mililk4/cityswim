@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,9 +16,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class LocationCrazinessIsolator {
-    public static final int MAX_AGE_MS = 5 * 60 * 1000;
-    public static final int MAX_ERROR_METERS = 100;
+    public static final int MAX_AGE_MS = 10 * 60 * 1000;
+    public static final int MAX_ERROR_METERS = 250;
     private final LocationManager locationManager;
+    private Location lastUsefulLocation;
 
     public LocationCrazinessIsolator(Context context) {
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -29,10 +31,11 @@ public class LocationCrazinessIsolator {
     public @Nullable Location usefulRecentLocation() {
         Location best = bestRecentLocation();
         if ((best != null) && (best.getAccuracy() < MAX_ERROR_METERS)) {
+            lastUsefulLocation = best;
             return best;
-        } else {
-            return null;
         }
+        if (lastUsefulLocation != null) return lastUsefulLocation;
+        return null;
     }
 
     public @Nullable Location bestRecentLocation() {
@@ -42,6 +45,7 @@ public class LocationCrazinessIsolator {
             final Location location = locationManager.getLastKnownLocation(provider);
             if (location != null && location.hasAccuracy() && location.getTime() > System.currentTimeMillis() - MAX_AGE_MS) {
                 recentLocations.add(location);
+                Log.i("location", "found location " + location);
             }
         }
         Collections.sort(recentLocations, new BestLocationAccuracy());

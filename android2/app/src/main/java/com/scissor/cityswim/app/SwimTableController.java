@@ -34,7 +34,7 @@ class SwimTableController {
                 row.addView(newColumn(swim.getDayLabel(), swim.isRunning()));
                 row.addView(newColumn(swim.getStartLabel(), swim.isRunning()));
                 row.addView(newColumn(swim.getEndLabel(), swim.isRunning()));
-                if (location!=null) {
+                if (location != null) {
                     row.addView(newColumn(distanceAsString(location, swim.getLocation()), swim.isRunning()));
                 }
                 layout.addView(row);
