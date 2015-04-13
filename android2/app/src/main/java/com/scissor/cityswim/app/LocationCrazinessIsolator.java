@@ -7,6 +7,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +26,7 @@ public class LocationCrazinessIsolator {
         locationManager.requestLocationUpdates(30 * 1000, 100, criteria, new MyListener(), Looper.myLooper());
     }
 
-    public Location usefulRecentLocation() {
+    public @Nullable Location usefulRecentLocation() {
         Location best = bestRecentLocation();
         if ((best != null) && (best.getAccuracy() < MAX_ERROR_METERS)) {
             return best;
@@ -34,7 +35,7 @@ public class LocationCrazinessIsolator {
         }
     }
 
-    public Location bestRecentLocation() {
+    public @Nullable Location bestRecentLocation() {
         List<String> matchingProviders = locationManager.getAllProviders();
         List<Location> recentLocations = new ArrayList<Location>();
         for (String provider : matchingProviders) {
