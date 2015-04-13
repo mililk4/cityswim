@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,8 +22,7 @@ public class LocationCrazinessIsolator {
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         final Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        locationManager.requestLocationUpdates(30 * 1000, 100, criteria, new MyListener(), null);
-
+        locationManager.requestLocationUpdates(30 * 1000, 100, criteria, new MyListener(), Looper.myLooper());
     }
 
     public Location usefulRecentLocation() {
