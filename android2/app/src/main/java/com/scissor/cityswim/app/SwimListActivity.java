@@ -42,7 +42,7 @@ public class SwimListActivity extends ActionBarActivity {
     private void startRepeatingTasks() {
         ScheduledThreadPoolExecutor pool = (ScheduledThreadPoolExecutor)
                 Executors.newScheduledThreadPool(2);
-        pool.scheduleAtFixedRate(new UpdateUiTask(),10,10, TimeUnit.SECONDS );
+        pool.scheduleAtFixedRate(new UpdateUiTask(),30,30, TimeUnit.SECONDS );
         pool.scheduleAtFixedRate(new RefreshSwimsTask(),30,30, TimeUnit.MINUTES );
 
     }
@@ -126,7 +126,9 @@ public class SwimListActivity extends ActionBarActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.i(TAG, "starting update");
                     tableController.updateContents();
+                    Log.i(TAG, "finished update");
                 }
             });
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.util.Log;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -26,7 +27,9 @@ class SwimTableController {
     public void updateContents() {
         if (!data.hasSwims()) return;
         Location location = locationProvider.usefulRecentLocation();
+        Log.i("table", "starting view update");
         layout.removeAllViews();
+        Log.i("table", "views removed");
         for (Swim swim : data.getSwims()) {
             if (!swim.isOver()) {
                 TableRow row = new TableRow(context);
@@ -40,6 +43,7 @@ class SwimTableController {
                 layout.addView(row);
             }
         }
+        Log.i("table", "views replaced");
     }
 
     private String distanceAsString(Location us, Location pool) {
